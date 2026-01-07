@@ -20,6 +20,8 @@
     <ProjectReference Include="..\itqtestapp.client\itqtestapp.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\ITQTestApp.Domain\ITQTestApp.Domain.csproj" />
+    <ProjectReference Include="..\ITQTestApp.Infrastructure\ITQTestApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
