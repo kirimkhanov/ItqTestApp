@@ -7,10 +7,10 @@ namespace ITQTestApp.Application.Handlers
 {
     public sealed class UploadCodeValuesHandler
     {
-        private readonly ICodeValueRepository _repository;
+        private readonly IReferenceItemRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UploadCodeValuesHandler(ICodeValueRepository repository, IUnitOfWork unitOfWork)
+        public UploadCodeValuesHandler(IReferenceItemRepository repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
@@ -25,7 +25,7 @@ namespace ITQTestApp.Application.Handlers
 
             var entities = command.Items
                 .OrderBy(i => i.Key)
-                .Select(i => new CodeValueItem(
+                .Select(i => new ReferenceItem(
                     code: new Code(i.Key),
                     value: i.Value))
                 .ToList();

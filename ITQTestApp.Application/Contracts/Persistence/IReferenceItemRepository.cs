@@ -4,15 +4,15 @@ using ITQTestApp.Domain.Entities;
 
 namespace ITQTestApp.Application.Contracts.Persistence
 {
-    public interface ICodeValueRepository
+    public interface IReferenceItemRepository
     {
         Task ClearAsync(CancellationToken cancellationToken);
 
         Task AddRangeAsync(
-            IReadOnlyCollection<CodeValueItem> items,
+            IReadOnlyCollection<ReferenceItem> items,
             CancellationToken cancellationToken);
 
-        Task<PagedResult<CodeValueItem>> GetAsync(
+        Task<PagedResult<ReferenceItem>> GetAsync(
             GetCodeValuesQuery query,
             CancellationToken cancellationToken);
     }

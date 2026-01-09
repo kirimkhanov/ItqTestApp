@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ITQTestApp.Application\ITQTestApp.Application.csproj" />
     <ProjectReference Include="..\ITQTestApp.Domain\ITQTestApp.Domain.csproj" />
   </ItemGroup>
 

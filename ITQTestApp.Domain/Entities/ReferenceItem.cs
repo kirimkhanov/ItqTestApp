@@ -2,7 +2,7 @@
 
 namespace ITQTestApp.Domain.Entities
 {
-    public class CodeValueItem
+    public class ReferenceItem
     {
         public int Id { get; private set; }
 
@@ -10,9 +10,9 @@ namespace ITQTestApp.Domain.Entities
 
         public string Value { get; private set; }
 
-        private CodeValueItem() { }
+        private ReferenceItem() { }
 
-        public CodeValueItem(Code code, string value)
+        public ReferenceItem(Code code, string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Значение не может быть пустым", nameof(value));

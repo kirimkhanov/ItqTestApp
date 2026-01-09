@@ -7,9 +7,9 @@ namespace ITQTestApp.Application.Handlers
 {
     public sealed class GetCodeValuesHandler
     {
-        private readonly ICodeValueRepository _repository;
+        private readonly IReferenceItemRepository _repository;
 
-        public GetCodeValuesHandler(ICodeValueRepository repository)
+        public GetCodeValuesHandler(IReferenceItemRepository repository)
         {
             _repository = repository;
         }
