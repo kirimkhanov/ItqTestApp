@@ -1,6 +1,6 @@
 ﻿namespace ITQTestApp.Application.DTOs
 {
-    public sealed class CodeValueDto
+    public sealed class ReferenceItemDto
     {
         public int Id { get; init; }
         public int Code { get; init; }

@@ -1,5 +1,4 @@
 ﻿using ITQTestApp.Application.Common.Pagination;
-using ITQTestApp.Application.Queries;
 using ITQTestApp.Domain.Entities;
 
 namespace ITQTestApp.Application.Contracts.Persistence
@@ -13,7 +12,8 @@ namespace ITQTestApp.Application.Contracts.Persistence
             CancellationToken cancellationToken);
 
         Task<PagedResult<ReferenceItem>> GetAsync(
-            GetCodeValuesQuery query,
+            int page,
+            int pageSize,
             CancellationToken cancellationToken);
     }
 }
