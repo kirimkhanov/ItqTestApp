@@ -1,10 +1,15 @@
+using ITQTestApp.API.DependencyInjection;
+using ITQTestApp.API.Middlewares;
+using ITQTestApp.Application.DependencyInjection;
+using ITQTestApp.Infrastructure.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+builder.Services.AddApi();
 
 var app = builder.Build();
 
@@ -18,9 +23,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseExceptionHandling();
 
-app.UseAuthorization();
+app.UseHttpsRedirection();
 
 app.MapControllers();
 
