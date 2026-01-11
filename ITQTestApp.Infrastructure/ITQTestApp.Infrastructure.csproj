@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ITQTestApp.Domain\ITQTestApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
+  </ItemGroup>
+
 </Project>

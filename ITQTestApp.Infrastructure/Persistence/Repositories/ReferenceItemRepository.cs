@@ -1,6 +1,5 @@
 ﻿using ITQTestApp.Application.Common.Pagination;
 using ITQTestApp.Application.Contracts.Persistence;
-using ITQTestApp.Application.Queries;
 using ITQTestApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,9 +26,30 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
             await _context.ReferenceItems.AddRangeAsync(items, cancellationToken);
         }
 
-        public Task<PagedResult<ReferenceItem>> GetAsync(GetCodeValuesQuery query, CancellationToken cancellationToken)
+        public Task<PagedResult<ReferenceItem>> GetAsync(
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return GetPagedAsync(page, pageSize, cancellationToken);
+        }
+
+        private async Task<PagedResult<ReferenceItem>> GetPagedAsync(
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken)
+        {
+            var totalCount = await _context.ReferenceItems.CountAsync(cancellationToken);
+
+            var skip = (page - 1) * pageSize;
+
+            var items = await _context.ReferenceItems
+                .AsNoTracking()
+                .Skip(skip)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return new PagedResult<ReferenceItem>(items, totalCount);
         }
     }
 }

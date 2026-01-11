@@ -4,32 +4,20 @@ namespace ITQTestApp.Infrastructure.Persistence.UnitOfWork
 {
     internal sealed class EfUnitOfWork : IUnitOfWork
     {
+        public IReferenceItemRepository ReferenceItemRepository { get; }
         private readonly AppDbContext _context;
 
-        public EfUnitOfWork(AppDbContext context)
+        public EfUnitOfWork(AppDbContext context, IReferenceItemRepository referenceItemRepository)
         {
             _context = context;
+            ReferenceItemRepository = referenceItemRepository;
         }
 
-        public async Task ExecuteAsync(
-            Func<CancellationToken, Task> action,
-            CancellationToken cancellationToken)
+        public Task<int> SaveAsync(CancellationToken cancellationToken) => _context.SaveChangesAsync(cancellationToken);
+
+        public void Dispose()
         {
-            await using var transaction =
-                await _context.Database.BeginTransactionAsync(cancellationToken);
-
-            try
-            {
-                await action(cancellationToken);
-
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
-            }
+            _context.Dispose();
         }
     }
 
