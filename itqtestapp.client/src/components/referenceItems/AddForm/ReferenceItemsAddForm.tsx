@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { replaceReferenceItems } from '../../../services/referenceItemsApi';
+﻿import { useState } from "react";
+import { replaceReferenceItems } from "../../../services/referenceItemsApi";
 
 type FormRow = {
   code: string;
@@ -7,7 +7,7 @@ type FormRow = {
 };
 
 type SubmitState = {
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 };
 
@@ -17,17 +17,21 @@ type Props = {
 };
 
 const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
-  const [rows, setRows] = useState<FormRow[]>([{ code: '', value: '' }]);
+  const [rows, setRows] = useState<FormRow[]>([{ code: "", value: "" }]);
   const [submitState, setSubmitState] = useState<SubmitState>({
-    status: 'idle',
+    status: "idle",
     error: null,
   });
 
   const handleAddRow = () => {
-    setRows((current) => [...current, { code: '', value: '' }]);
+    setRows((current) => [...current, { code: "", value: "" }]);
   };
 
-  const handleRowChange = (index: number, field: keyof FormRow, value: string) => {
+  const handleRowChange = (
+    index: number,
+    field: keyof FormRow,
+    value: string
+  ) => {
     setRows((current) =>
       current.map((row, rowIndex) =>
         rowIndex === index ? { ...row, [field]: value } : row
@@ -36,30 +40,43 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
   };
 
   const handleResetForm = () => {
-    setRows([{ code: '', value: '' }]);
-    setSubmitState({ status: 'idle', error: null });
+    setRows([{ code: "", value: "" }]);
+    setSubmitState({ status: "idle", error: null });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitState({ status: 'loading', error: null });
+    setSubmitState({ status: "loading", error: null });
 
     const trimmedRows = rows.map((row) => ({
       code: row.code.toString().trim(),
       value: row.value.toString().trim(),
     }));
 
-    if (trimmedRows.some((row) => row.code.length === 0 || row.value.length === 0)) {
+    if (
+      trimmedRows.some((row) => row.code.length === 0 || row.value.length === 0)
+    ) {
       setSubmitState({
-        status: 'failed',
-        error: 'Заполните код и значение для всех строк.',
+        status: "failed",
+        error: "Заполните код и значение для всех строк.",
       });
       return;
     }
 
     const codes = trimmedRows.map((row) => Number(row.code));
     if (codes.some((code) => Number.isNaN(code))) {
-      setSubmitState({ status: 'failed', error: 'Код должен быть целым числом.' });
+      setSubmitState({
+        status: "failed",
+        error: "Код должен быть целым числом.",
+      });
+      return;
+    }
+
+    if (new Set(codes).size !== codes.length) {
+      setSubmitState({
+        status: "failed",
+        error: "Коды не должны повторяться.",
+      });
       return;
     }
 
@@ -68,15 +85,15 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
     try {
       await replaceReferenceItems(payload);
 
-      setSubmitState({ status: 'succeeded', error: null });
+      setSubmitState({ status: "succeeded", error: null });
       handleResetForm();
       onSaved();
     } catch (submitError) {
       const message =
         submitError instanceof Error
           ? submitError.message
-          : 'Произошла ошибка при сохранении.';
-      setSubmitState({ status: 'failed', error: message });
+          : "Произошла ошибка при сохранении.";
+      setSubmitState({ status: "failed", error: message });
     }
   };
 
@@ -90,7 +107,11 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
               Добавьте код и значение, чтобы заменить текущий набор данных.
             </p>
           </div>
-          <button className="btn btn-outline-secondary btn-sm" type="button" onClick={onBack}>
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            type="button"
+            onClick={onBack}
+          >
             Вернуться к списку
           </button>
         </div>
@@ -103,14 +124,19 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
               <div className="col-12 col-md-2 text-md-end">Добавить</div>
             </div>
             {rows.map((row, index) => (
-              <div key={`row-${index}`} className="row g-2 align-items-center mb-2">
+              <div
+                key={`row-${index}`}
+                className="row g-2 align-items-center mb-2"
+              >
                 <div className="col-12 col-md-4">
                   <input
                     type="number"
                     className="form-control"
                     placeholder="Например, 101"
                     value={row.code}
-                    onChange={(event) => handleRowChange(index, 'code', event.target.value)}
+                    onChange={(event) =>
+                      handleRowChange(index, "code", event.target.value)
+                    }
                     required
                   />
                 </div>
@@ -120,7 +146,9 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
                     className="form-control"
                     placeholder="Введите значение"
                     value={row.value}
-                    onChange={(event) => handleRowChange(index, 'value', event.target.value)}
+                    onChange={(event) =>
+                      handleRowChange(index, "value", event.target.value)
+                    }
                     required
                   />
                 </div>
@@ -138,7 +166,7 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
             ))}
           </div>
 
-          {submitState.status === 'failed' && (
+          {submitState.status === "failed" && (
             <div className="alert alert-danger mt-3" role="alert">
               {submitState.error}
             </div>
@@ -148,15 +176,15 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
             <button
               className="btn btn-primary"
               type="submit"
-              disabled={submitState.status === 'loading'}
+              disabled={submitState.status === "loading"}
             >
-              {submitState.status === 'loading' ? 'Сохраняю...' : 'Сохранить'}
+              {submitState.status === "loading" ? "Сохраняю..." : "Сохранить"}
             </button>
             <button
               className="btn btn-outline-secondary"
               type="button"
               onClick={handleResetForm}
-              disabled={submitState.status === 'loading'}
+              disabled={submitState.status === "loading"}
             >
               Очистить
             </button>
@@ -168,5 +196,3 @@ const ReferenceItemsAddForm = ({ onBack, onSaved }: Props) => {
 };
 
 export default ReferenceItemsAddForm;
-
-

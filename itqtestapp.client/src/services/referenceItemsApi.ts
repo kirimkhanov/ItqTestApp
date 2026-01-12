@@ -23,7 +23,7 @@ export const fetchReferenceItems = async (
     `/api/ReferenceItems?page=${page}&pageSize=${pageSize}${searchQuery}`
   );
   if (!response.ok) {
-    throw new Error('Failed to load reference items.');
+    throw new Error('Не удалось загрузить справочник.');
   }
 
   const data = (await response.json()) as FetchReferenceItemsRawResponse;
@@ -45,6 +45,15 @@ export const replaceReferenceItems = async (
   });
 
   if (!response.ok) {
-    throw new Error('Не удалось сохранить данные.');
+    let message = 'Не удалось сохранить справочник.';
+    try {
+      const data = (await response.json()) as { message?: string };
+      if (data?.message) {
+        message = data.message;
+      }
+    } catch {
+      // Ignore parsing errors and keep the fallback message.
+    }
+    throw new Error(message);
   }
 };
