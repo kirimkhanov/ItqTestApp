@@ -2,20 +2,26 @@
 using ITQTestApp.Application.Contracts.Persistence;
 using ITQTestApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ITQTestApp.Infrastructure.Persistence.Repositories
 {
     internal sealed class ReferenceItemRepository : IReferenceItemRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<ReferenceItemRepository> _logger;
 
-        public ReferenceItemRepository(AppDbContext context)
+        public ReferenceItemRepository(
+            AppDbContext context,
+            ILogger<ReferenceItemRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task ClearAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Clearing all reference items.");
             await _context.ReferenceItems.ExecuteDeleteAsync(cancellationToken);
         }
 
@@ -23,6 +29,7 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
             IReadOnlyCollection<ReferenceItem> items,
             CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Adding reference items. Count: {ItemCount}", items.Count);
             await _context.ReferenceItems.AddRangeAsync(items, cancellationToken);
         }
 
@@ -41,6 +48,12 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
             string? search,
             CancellationToken cancellationToken)
         {
+            _logger.LogDebug(
+                "Querying reference items. Page: {Page}, PageSize: {PageSize}, Search: {Search}",
+                page,
+                pageSize,
+                search);
+
             var query = _context.ReferenceItems.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -63,6 +76,11 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
+
+            _logger.LogDebug(
+                "Reference items queried. Returned: {ReturnedCount}, Total: {TotalCount}",
+                items.Count,
+                totalCount);
 
             return new PagedResult<ReferenceItem>(items, totalCount);
         }

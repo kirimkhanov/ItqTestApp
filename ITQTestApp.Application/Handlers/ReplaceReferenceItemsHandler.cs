@@ -3,6 +3,7 @@ using ITQTestApp.Application.Contracts.Persistence;
 using ITQTestApp.Domain.Entities;
 using ITQTestApp.Domain.ValueObjects;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ITQTestApp.Application.Handlers
 {
@@ -10,10 +11,14 @@ namespace ITQTestApp.Application.Handlers
         : IRequestHandler<ReplaceReferenceItemsCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<ReplaceReferenceItemsHandler> _logger;
 
-        public ReplaceReferenceItemsHandler(IUnitOfWork unitOfWork)
+        public ReplaceReferenceItemsHandler(
+            IUnitOfWork unitOfWork,
+            ILogger<ReplaceReferenceItemsHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(
@@ -22,6 +27,8 @@ namespace ITQTestApp.Application.Handlers
         {
             if (command.Items is null || command.Items.Count == 0)
                 throw new ArgumentException("Список элементов для загрузки пуст");
+
+            _logger.LogInformation("Replacing reference items. Count: {ItemCount}", command.Items.Count);
 
             var entities = command.Items
                 .OrderBy(i => i.Key)
@@ -34,7 +41,9 @@ namespace ITQTestApp.Application.Handlers
             await _unitOfWork.ReferenceItemRepository.ClearAsync(cancellationToken);
             await _unitOfWork.ReferenceItemRepository.AddRangeAsync(entities, cancellationToken);
 
-            await _unitOfWork.SaveAsync(cancellationToken);
+            var savedCount = await _unitOfWork.SaveAsync(cancellationToken);
+
+            _logger.LogInformation("Reference items replaced. Saved: {SavedCount}", savedCount);
 
             return Unit.Value;
         }

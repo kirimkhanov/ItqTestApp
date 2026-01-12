@@ -2,8 +2,17 @@ using ITQTestApp.API.DependencyInjection;
 using ITQTestApp.API.Middlewares;
 using ITQTestApp.Application.DependencyInjection;
 using ITQTestApp.Infrastructure.DependencyInjection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext();
+});
 
 // Add services to the container.
 
@@ -26,6 +35,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandling();
 
 app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.MapControllers();
 
