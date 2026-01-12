@@ -14,6 +14,7 @@ namespace ITQTestApp.Application.Contracts.Persistence
         Task<PagedResult<ReferenceItem>> GetAsync(
             int page,
             int pageSize,
+            string? search,
             CancellationToken cancellationToken);
     }
 }

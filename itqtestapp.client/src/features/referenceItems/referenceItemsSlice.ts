@@ -3,11 +3,8 @@ import { fetchReferenceItems as fetchReferenceItemsApi } from '../../services/re
 
 export type ReferenceItem = {
   rowNumber?: number;
-  RowNumber?: number;
   code?: number;
-  Code?: number;
   value?: string;
-  Value?: string;
 };
 
 export type ReferenceItemsState = {
@@ -15,6 +12,7 @@ export type ReferenceItemsState = {
   totalCount: number;
   page: number;
   pageSize: number;
+  search: string;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 };
@@ -22,6 +20,7 @@ export type ReferenceItemsState = {
 type FetchReferenceItemsArgs = {
   page: number;
   pageSize: number;
+  search?: string;
 };
 
 type FetchReferenceItemsResult = {
@@ -34,6 +33,7 @@ const initialState: ReferenceItemsState = {
   totalCount: 0,
   page: 1,
   pageSize: 10,
+  search: '',
   status: 'idle',
   error: null,
 };
@@ -41,8 +41,8 @@ const initialState: ReferenceItemsState = {
 export const fetchReferenceItems = createAsyncThunk<
   FetchReferenceItemsResult,
   FetchReferenceItemsArgs
->('referenceItems/fetch', async ({ page, pageSize }) =>
-  fetchReferenceItemsApi(page, pageSize)
+>('referenceItems/fetch', async ({ page, pageSize, search }) =>
+  fetchReferenceItemsApi(page, pageSize, search)
 );
 
 const referenceItemsSlice = createSlice({
@@ -54,6 +54,10 @@ const referenceItemsSlice = createSlice({
     },
     setPageSize(state, action: PayloadAction<number>) {
       state.pageSize = action.payload;
+      state.page = 1;
+    },
+    setSearch(state, action: PayloadAction<string>) {
+      state.search = action.payload;
       state.page = 1;
     },
   },
@@ -75,6 +79,6 @@ const referenceItemsSlice = createSlice({
   },
 });
 
-export const { setPage, setPageSize } = referenceItemsSlice.actions;
+export const { setPage, setPageSize, setSearch } = referenceItemsSlice.actions;
 
 export default referenceItemsSlice.reducer;

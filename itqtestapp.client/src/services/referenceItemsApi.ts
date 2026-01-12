@@ -7,24 +7,29 @@ export type FetchReferenceItemsResponse = {
 
 type FetchReferenceItemsRawResponse = {
   items?: ReferenceItem[];
-  Items?: ReferenceItem[];
   totalCount?: number;
-  TotalCount?: number;
 };
 
 export const fetchReferenceItems = async (
   page: number,
-  pageSize: number
+  pageSize: number,
+  search?: string
 ): Promise<FetchReferenceItemsResponse> => {
-  const response = await fetch(`/api/ReferenceItems?page=${page}&pageSize=${pageSize}`);
+  const trimmedSearch = search?.trim();
+  const searchQuery = trimmedSearch
+    ? `&search=${encodeURIComponent(trimmedSearch)}`
+    : '';
+  const response = await fetch(
+    `/api/ReferenceItems?page=${page}&pageSize=${pageSize}${searchQuery}`
+  );
   if (!response.ok) {
     throw new Error('Failed to load reference items.');
   }
 
   const data = (await response.json()) as FetchReferenceItemsRawResponse;
   return {
-    items: data.items ?? data.Items ?? [],
-    totalCount: data.totalCount ?? data.TotalCount ?? 0,
+    items: data.items ?? [],
+    totalCount: data.totalCount ?? 0,
   };
 };
 

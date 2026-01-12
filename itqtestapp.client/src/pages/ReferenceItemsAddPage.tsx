@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import ReferenceItemsAddForm from "../components/ReferenceItemsAddForm";
+import { ReferenceItemsAddForm } from "../components";
 
 const ReferenceItemsAddPage = () => {
   const navigate = useNavigate();

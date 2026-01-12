@@ -29,6 +29,7 @@ namespace ITQTestApp.Application.Handlers
             var result = await _repository.GetAsync(
                 query.Page,
                 query.PageSize,
+                query.Search,
                 cancellationToken);
 
             var dtoItems = result.Items

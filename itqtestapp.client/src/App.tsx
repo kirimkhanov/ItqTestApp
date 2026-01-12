@@ -1,6 +1,6 @@
 import './App.css';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import ReferenceItemsLayout from './components/ReferenceItemsLayout';
+import { ReferenceItemsLayout } from './components';
 import ReferenceItemsAddPage from './pages/ReferenceItemsAddPage';
 import ReferenceItemsListPage from './pages/ReferenceItemsListPage';
 

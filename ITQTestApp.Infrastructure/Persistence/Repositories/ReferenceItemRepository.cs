@@ -29,22 +29,36 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
         public Task<PagedResult<ReferenceItem>> GetAsync(
             int page,
             int pageSize,
+            string? search,
             CancellationToken cancellationToken)
         {
-            return GetPagedAsync(page, pageSize, cancellationToken);
+            return GetPagedAsync(page, pageSize, search, cancellationToken);
         }
 
         private async Task<PagedResult<ReferenceItem>> GetPagedAsync(
             int page,
             int pageSize,
+            string? search,
             CancellationToken cancellationToken)
         {
-            var totalCount = await _context.ReferenceItems.CountAsync(cancellationToken);
+            var query = _context.ReferenceItems.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var trimmedSearch = search.Trim();
+                var hasCodeFilter = int.TryParse(trimmedSearch, out var codeValue);
+                var normalizedSearch = trimmedSearch.ToLower();
+
+                query = query.Where(item =>
+                    item.Value.ToLower().StartsWith(normalizedSearch) ||
+                    (hasCodeFilter && item.Code == codeValue));
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
 
             var skip = (page - 1) * pageSize;
 
-            var items = await _context.ReferenceItems
-                .AsNoTracking()
+            var items = await query
                 .OrderBy(item => item.RowNumber)
                 .Skip(skip)
                 .Take(pageSize)

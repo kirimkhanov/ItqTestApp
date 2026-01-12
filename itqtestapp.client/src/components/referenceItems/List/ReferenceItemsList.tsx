@@ -1,16 +1,20 @@
-import type { ReferenceItem, ReferenceItemsState } from '../features/referenceItems/referenceItemsSlice';
-import { usePagination } from '../hooks/usePagination';
-import Pagination from './Pagination';
+﻿import type { ReferenceItem, ReferenceItemsState } from '../../../features/referenceItems/referenceItemsSlice';
+import { usePagination } from '../../../hooks/usePagination';
+import { Pagination } from '../../common';
+import ReferenceItemsPageSizeSelect from '../PageSizeSelect';
+import ReferenceItemsSearch from '../Search';
 
 type Props = {
   items: ReferenceItem[];
   totalCount: number;
   page: number;
   pageSize: number;
+  search: string;
   status: ReferenceItemsState['status'];
   error: ReferenceItemsState['error'];
   onPageChange: (nextPage: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  onSearchChange: (value: string) => void;
   onAdd: () => void;
 };
 
@@ -19,10 +23,12 @@ const ReferenceItemsList = ({
   totalCount,
   page,
   pageSize,
+  search,
   status,
   error,
   onPageChange,
   onPageSizeChange,
+  onSearchChange,
   onAdd,
 }: Props) => {
   const { totalPages, visiblePages, startIndex, endIndex } = usePagination(
@@ -35,23 +41,12 @@ const ReferenceItemsList = ({
     <div className="card border-0 shadow-sm">
       <div className="card-body">
         <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <ReferenceItemsPageSizeSelect
+            value={pageSize}
+            onChange={onPageSizeChange}
+          />
           <div className="d-flex align-items-center gap-2">
-            <label className="small text-muted" htmlFor="pageSizeSelect">
-              Строк на странице
-            </label>
-            <select
-              id="pageSizeSelect"
-              className="form-select form-select-sm w-auto"
-              value={pageSize}
-              onChange={(event) => onPageSizeChange(Number(event.target.value))}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-          </div>
-          <div className="d-flex align-items-center gap-2">
+            <ReferenceItemsSearch value={search} onChange={onSearchChange} />
             <button className="btn btn-primary btn-sm" type="button" onClick={onAdd}>
               Добавить
             </button>
@@ -90,9 +85,9 @@ const ReferenceItemsList = ({
                   </tr>
                 )}
                 {items.map((item) => {
-                  const code = item.code ?? item.Code;
-                  const value = item.value ?? item.Value;
-                  const rowNumber = item.rowNumber ?? item.RowNumber;
+                  const code = item.code;
+                  const value = item.value;
+                  const rowNumber = item.rowNumber;
 
                   return (
                     <tr key={code ?? rowNumber}>
@@ -124,3 +119,10 @@ const ReferenceItemsList = ({
 };
 
 export default ReferenceItemsList;
+
+
+
+
+
+
+

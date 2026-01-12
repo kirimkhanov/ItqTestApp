@@ -34,7 +34,7 @@ namespace ITQTestApp.API.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedResult<ReferenceItemResponse>>> GetItems([FromQuery] GetReferenceItemsRequest request, CancellationToken cancellationToken)
         {
-            var query = new GetReferenceItemsQuery(request.Page, request.PageSize);
+            var query = new GetReferenceItemsQuery(request.Page, request.PageSize, request.Search);
 
             var result = await _mediatR.Send(query, cancellationToken);
 
