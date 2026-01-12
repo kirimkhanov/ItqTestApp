@@ -1,11 +1,16 @@
-﻿#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-th, td {
-    padding-left: 1rem;
-    padding-right: 1rem;
+.app-header {
+    background: linear-gradient(135deg, #f7f2e8 0%, #e9f0f7 60%, #d8e3f2 100%);
+    border-bottom: 1px solid rgba(33, 37, 41, 0.08);
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
