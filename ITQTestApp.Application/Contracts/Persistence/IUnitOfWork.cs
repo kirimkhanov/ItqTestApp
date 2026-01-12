@@ -2,7 +2,8 @@
 {
     public interface IUnitOfWork
     {
-        IReferenceItemRepository ReferenceItemRepository { get; }
-        Task<int> SaveAsync(CancellationToken cancellationToken);
+        Task ExecuteAsync(
+            Func<CancellationToken, Task> operation,
+            CancellationToken cancellationToken);
     }
 }

@@ -6,7 +6,6 @@ using ITQTestApp.Application.Common.Pagination;
 using ITQTestApp.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ITQTestApp.API.Controllers
 {

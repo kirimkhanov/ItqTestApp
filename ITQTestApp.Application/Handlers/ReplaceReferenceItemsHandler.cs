@@ -1,4 +1,4 @@
-using ITQTestApp.Application.Commands;
+﻿using ITQTestApp.Application.Commands;
 using ITQTestApp.Application.Contracts.Persistence;
 using ITQTestApp.Domain.Entities;
 using ITQTestApp.Domain.ValueObjects;
@@ -11,13 +11,16 @@ namespace ITQTestApp.Application.Handlers
         : IRequestHandler<ReplaceReferenceItemsCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IReferenceItemRepository _referenceItemRepository;
         private readonly ILogger<ReplaceReferenceItemsHandler> _logger;
 
         public ReplaceReferenceItemsHandler(
             IUnitOfWork unitOfWork,
+            IReferenceItemRepository referenceItemRepository,
             ILogger<ReplaceReferenceItemsHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _referenceItemRepository = referenceItemRepository;
             _logger = logger;
         }
 
@@ -25,8 +28,7 @@ namespace ITQTestApp.Application.Handlers
             ReplaceReferenceItemsCommand command,
             CancellationToken cancellationToken)
         {
-            if (command.Items is null || command.Items.Count == 0)
-                throw new ArgumentException("Список элементов для загрузки пуст");
+            ValidateItems(command.Items);
 
             _logger.LogInformation("Replacing reference items. Count: {ItemCount}", command.Items.Count);
 
@@ -38,14 +40,31 @@ namespace ITQTestApp.Application.Handlers
                     rowNumber: index + 1))
                 .ToList();
 
-            await _unitOfWork.ReferenceItemRepository.ClearAsync(cancellationToken);
-            await _unitOfWork.ReferenceItemRepository.AddRangeAsync(entities, cancellationToken);
+            await _unitOfWork.ExecuteAsync(async ct =>
+            {
+                await _referenceItemRepository.ClearAsync(ct);
+                await _referenceItemRepository.AddRangeAsync(entities, ct);
+            }, cancellationToken);
 
-            var savedCount = await _unitOfWork.SaveAsync(cancellationToken);
-
-            _logger.LogInformation("Reference items replaced. Saved: {SavedCount}", savedCount);
+            _logger.LogInformation("Reference items replaced. Saved: {SavedCount}", entities.Count);
 
             return Unit.Value;
         }
+
+        private static void ValidateItems(IReadOnlyDictionary<int, string> items)
+        {
+            if (items is null || items.Count == 0)
+                throw new ArgumentException("Список элементов для загрузки пуст.");
+
+            foreach (var (code, value) in items)
+            {
+                if (code <= 0)
+                    throw new ArgumentException($"Код {code} должен быть положительным.");
+
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException($"Значение не должно быть пустым.");
+            }
+        }
     }
 }
+

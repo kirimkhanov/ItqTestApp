@@ -1,4 +1,5 @@
-﻿using ITQTestApp.Application.Common.Pagination;
+﻿using EFCore.BulkExtensions;
+using ITQTestApp.Application.Common.Pagination;
 using ITQTestApp.Application.Contracts.Persistence;
 using ITQTestApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
         public async Task ClearAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Clearing all reference items.");
-            await _context.ReferenceItems.ExecuteDeleteAsync(cancellationToken);
+            await _context.TruncateAsync<ReferenceItem>(cancellationToken: cancellationToken);
         }
 
         public async Task AddRangeAsync(
@@ -30,7 +31,7 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
             CancellationToken cancellationToken)
         {
             _logger.LogInformation("Adding reference items. Count: {ItemCount}", items.Count);
-            await _context.ReferenceItems.AddRangeAsync(items, cancellationToken);
+            await _context.BulkInsertAsync(items, cancellationToken: cancellationToken);
         }
 
         public Task<PagedResult<ReferenceItem>> GetAsync(

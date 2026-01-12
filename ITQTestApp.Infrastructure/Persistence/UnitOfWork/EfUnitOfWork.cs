@@ -6,26 +6,35 @@ namespace ITQTestApp.Infrastructure.Persistence.UnitOfWork
 {
     internal sealed class EfUnitOfWork : IUnitOfWork
     {
-        public IReferenceItemRepository ReferenceItemRepository { get; }
         private readonly AppDbContext _context;
         private readonly ILogger<EfUnitOfWork> _logger;
 
         public EfUnitOfWork(
             AppDbContext context,
-            IReferenceItemRepository referenceItemRepository,
             ILogger<EfUnitOfWork> logger)
         {
             _context = context;
-            ReferenceItemRepository = referenceItemRepository;
             _logger = logger;
         }
 
-        public async Task<int> SaveAsync(CancellationToken cancellationToken)
+        public async Task ExecuteAsync(
+            Func<CancellationToken, Task> operation,
+            CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Saving changes to the database.");
-            var savedCount = await _context.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Changes saved to the database. Rows: {SavedCount}", savedCount);
-            return savedCount;
+            _logger.LogInformation("Starting transaction.");
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                await operation(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                _logger.LogInformation("Transaction committed.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Transaction rolled back due to error.");
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
 
         public void Dispose()
