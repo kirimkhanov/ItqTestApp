@@ -1,7 +1,6 @@
 ﻿using ITQTestApp.Application.Common.Pagination;
 using ITQTestApp.Application.Contracts.Persistence;
 using ITQTestApp.Application.DTOs;
-using ITQTestApp.Application.Exceptions;
 using ITQTestApp.Application.Queries;
 using MediatR;
 
@@ -22,10 +21,10 @@ namespace ITQTestApp.Application.Handlers
             CancellationToken cancellationToken)
         {
             if (query.Page <= 0)
-                throw new ValidationException("Номер страницы должен быть больше нуля");
+                throw new ArgumentException("Номер страницы должен быть больше нуля");
 
             if (query.PageSize <= 0)
-                throw new ValidationException("Размер страницы должен быть больше нуля");
+                throw new ArgumentException("Размер страницы должен быть больше нуля");
 
             var result = await _repository.GetAsync(
                 query.Page,
@@ -33,11 +32,11 @@ namespace ITQTestApp.Application.Handlers
                 cancellationToken);
 
             var dtoItems = result.Items
-                .Select(x => new ReferenceItemDto
+                .Select(item => new ReferenceItemDto
                 {
-                    Id = x.Id,
-                    Code = x.Code.Value,
-                    Value = x.Value
+                    RowNumber = item.RowNumber,
+                    Code = item.Code.Value,
+                    Value = item.Value
                 })
                 .ToList();
 

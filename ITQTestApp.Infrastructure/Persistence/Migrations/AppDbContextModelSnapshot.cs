@@ -23,42 +23,19 @@ namespace ITQTestApp.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("ITQTestApp.Domain.Entities.ReferenceItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("Code")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("RowNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("Code");
 
                     b.ToTable("ReferenceItems");
-                });
-
-            modelBuilder.Entity("ITQTestApp.Domain.Entities.ReferenceItem", b =>
-                {
-                    b.OwnsOne("ITQTestApp.Domain.ValueObjects.Code", "Code", b1 =>
-                        {
-                            b1.Property<int>("ReferenceItemId")
-                                .HasColumnType("integer");
-
-                            b1.Property<int>("Value")
-                                .HasColumnType("integer")
-                                .HasColumnName("code");
-
-                            b1.HasKey("ReferenceItemId");
-
-                            b1.ToTable("ReferenceItems");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ReferenceItemId");
-                        });
-
-                    b.Navigation("Code")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

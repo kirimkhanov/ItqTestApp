@@ -1,5 +1,4 @@
 ﻿using ITQTestApp.API.Contracts.Responses;
-using ITQTestApp.Application.Exceptions;
 using System.Text.Json;
 
 namespace ITQTestApp.API.Middlewares
@@ -40,12 +39,12 @@ namespace ITQTestApp.API.Middlewares
         {
             var (statusCode, error) = exception switch
             {
-                ValidationException validationException => (
+                ArgumentException argumentException => (
                     StatusCodes.Status400BadRequest,
                     new ErrorResponse
                     {
                         Code = "validation_error",
-                        Message = validationException.Message
+                        Message = argumentException.Message
                     }),
 
                 JsonException jsonException => (

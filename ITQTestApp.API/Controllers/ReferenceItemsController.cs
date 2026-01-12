@@ -38,7 +38,16 @@ namespace ITQTestApp.API.Controllers
 
             var result = await _mediatR.Send(query, cancellationToken);
 
-            return Ok(result);
+            var responseItems = result.Items
+                .Select(item => new ReferenceItemResponse
+                {
+                    RowNumber = item.RowNumber,
+                    Code = item.Code,
+                    Value = item.Value
+                })
+                .ToList();
+
+            return Ok(new PagedResult<ReferenceItemResponse>(responseItems, result.TotalCount));
         }
     }
 }

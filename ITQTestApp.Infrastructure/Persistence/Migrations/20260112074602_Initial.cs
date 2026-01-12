@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,14 +14,13 @@ namespace ITQTestApp.Infrastructure.Persistence.Migrations
                 name: "ReferenceItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    code = table.Column<int>(type: "integer", nullable: false),
+                    Code = table.Column<int>(type: "integer", nullable: false),
+                    RowNumber = table.Column<int>(type: "integer", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReferenceItems", x => x.Id);
+                    table.PrimaryKey("PK_ReferenceItems", x => x.Code);
                 });
         }
 

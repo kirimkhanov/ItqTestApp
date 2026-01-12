@@ -1,4 +1,5 @@
-﻿using ITQTestApp.Domain.Entities;
+using ITQTestApp.Domain.Entities;
+using ITQTestApp.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,12 +9,16 @@ namespace ITQTestApp.Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<ReferenceItem> builder)
         {
-            builder.OwnsOne(x => x.Code, owned =>
-            {
-                owned.Property(p => p.Value)
-                     .HasColumnName("code")
-                     .IsRequired();
-            });
+            builder.HasKey(x => x.Code);
+
+            builder.Property(x => x.Code)
+                .HasConversion(
+                    code => code.Value,
+                    value => new Code(value))
+                .IsRequired();
+
+            builder.Property(x => x.RowNumber)
+                .IsRequired();
         }
     }
 }

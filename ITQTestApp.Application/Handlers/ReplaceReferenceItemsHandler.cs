@@ -1,6 +1,5 @@
 using ITQTestApp.Application.Commands;
 using ITQTestApp.Application.Contracts.Persistence;
-using ITQTestApp.Application.Exceptions;
 using ITQTestApp.Domain.Entities;
 using ITQTestApp.Domain.ValueObjects;
 using MediatR;
@@ -22,13 +21,14 @@ namespace ITQTestApp.Application.Handlers
             CancellationToken cancellationToken)
         {
             if (command.Items is null || command.Items.Count == 0)
-                throw new ValidationException("Список элементов для загрузки пуст");
+                throw new ArgumentException("Список элементов для загрузки пуст");
 
             var entities = command.Items
                 .OrderBy(i => i.Key)
-                .Select(i => new ReferenceItem(
-                    code: new Code(i.Key),
-                    value: i.Value))
+                .Select((item, index) => new ReferenceItem(
+                    code: new Code(item.Key),
+                    value: item.Value,
+                    rowNumber: index + 1))
                 .ToList();
 
             await _unitOfWork.ReferenceItemRepository.ClearAsync(cancellationToken);

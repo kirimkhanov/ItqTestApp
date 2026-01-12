@@ -45,6 +45,7 @@ namespace ITQTestApp.Infrastructure.Persistence.Repositories
 
             var items = await _context.ReferenceItems
                 .AsNoTracking()
+                .OrderBy(item => item.RowNumber)
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
